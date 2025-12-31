@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TaskNotesApp.ViewModels"
+             x:Class="TaskNotesApp.Views.TaskListPage"
+             BackgroundColor="#F4F6FA">
+
+    <ContentPage.BindingContext>
+        <vm:TaskListViewModel />
+    </ContentPage.BindingContext>
+
+ 
+    <Grid Padding="16"
+          RowDefinitions="Auto,*,Auto">
+
+     
+        <Label Grid.Row="0"
+               Text="📝 Task Notes"
+               FontSize="28"
+               FontAttributes="Bold"
+               TextColor="#1F2937"
+               Margin="0,0,0,10" />
+
+     
+        <CollectionView Grid.Row="1"
+                ItemsSource="{Binding Tasks}"
+                VerticalScrollBarVisibility="Always"
+                SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="8"
+              ColumnDefinitions="Auto,*,Auto,Auto"
+              VerticalOptions="Center">
+
+                        <CheckBox Grid.Column="0"
+                          IsChecked="{Binding IsCompleted, Mode=TwoWay}"
+                          Color="green"
+                          VerticalOptions="Center" />
+
+
+
+
+
+                        <Label Grid.Column="1"
+                   Text="{Binding Title}"
+                   FontSize="16"
+                   TextColor="Black"
+                   FontAttributes="Bold"
+                   Margin="10,0"
+                   VerticalOptions="Center"
+                   IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" />
+
+                    
+                        <Entry Grid.Column="1"
+                   Text="{Binding Title}"
+                   FontSize="16" 
+                   FontAttributes="Bold"
+                   BackgroundColor="#F3F4F6"
+                   TextColor="Black"
+                   Margin="10,0"
+                  
+
+                   IsVisible="{Binding IsEditing,Converter={StaticResource InverseBoolConverter}}" />
+
+                      
+                   <Button  Grid.Column="2"
+                    Text="Update"
+                    FontAttributes="Bold"
+                    BackgroundColor="green"
+                    TextColor="White"
+                    WidthRequest="90"
+                    Margin="10,0"
+                    HeightRequest="30"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TaskListViewModel}},
+                          Path=SaveCommand}"
+                    CommandParameter="{Binding .}"
+                    IsEnabled="{Binding HasChanges}"
+                   />
+
+ 
+                     <Button Grid.Column="3"
+                    Text="Delete"
+                    FontAttributes="Bold"
+                    BackgroundColor="#4f46E5"
+                    TextColor="White"
+                    WidthRequest="90"
+                    HeightRequest="30"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TaskListViewModel}},
+                                      Path=DeleteCommand}"
+                    CommandParameter="{Binding .}" />
+
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+
+        </CollectionView>
+
+       
+        <Frame Grid.Row="2"
+               Padding="10"
+               CornerRadius="16"
+               BackgroundColor="White"
+               HasShadow="True"
+               Margin="0,10,0,0">
+
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10">
+
+                <Entry Grid.Column="0"
+                       Placeholder="Enter new task..."
+                       Text="{Binding NewTaskTitle}"
+                       HeightRequest="48"
+                       TextColor="Black"
+                       BackgroundColor="#F3F4F6"
+                       Margin="0" />
+
+                <Button Grid.Column="1"
+                        Text="Add"
+                        FontAttributes="Bold"
+                        BackgroundColor="#4F46E5"
+                        TextColor="White"
+                        CornerRadius="12"
+                        Command="{Binding AddCommand}" />
+            </Grid>
+
+        </Frame>
+
+    </Grid>
+
+</ContentPage>
