@@ -18,6 +18,7 @@ jobs:
       with:
         dotnet-version: '8.0.403'
 
+
     - name: Remove preview .NET SDKs
       run: |
         sudo rm -rf /usr/local/share/dotnet/sdk/10.*
