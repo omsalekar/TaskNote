@@ -10,24 +10,17 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Setup .NET 8 SDK
-      uses: actions/setup-dotnet@v4
+    - uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.403'
-
-
-    - name: Remove preview .NET SDKs
-      run: |
-        sudo rm -rf /usr/local/share/dotnet/sdk/10.*
 
     - name: Install MAUI workload
       run: dotnet workload install maui
 
-    - name: Restore dependencies
-      run: dotnet restore TaskNotesApp/TaskNotesApp.csproj
+    - name: Restore Android only
+      run: dotnet restore TaskNotesApp/TaskNotesApp.csproj -f net8.0-android
 
     - name: Build Android APK
       run: dotnet publish TaskNotesApp/TaskNotesApp.csproj -c Release -f net8.0-android
