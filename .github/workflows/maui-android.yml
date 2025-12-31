@@ -20,7 +20,7 @@ jobs:
       run: dotnet workload install maui
 
     - name: Restore Android only
-      run: dotnet restore TaskNotesApp/TaskNotesApp.csproj -f net8.0-android
+      run: dotnet restore TaskNotesApp/TaskNotesApp.csproj /p:TargetFramework=net8.0-android
 
     - name: Build Android APK
       run: dotnet publish TaskNotesApp/TaskNotesApp.csproj -c Release -f net8.0-android
