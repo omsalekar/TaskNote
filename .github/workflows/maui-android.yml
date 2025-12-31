@@ -22,14 +22,14 @@ jobs:
       run: dotnet workload install maui
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore TaskNotesApp/TaskNotesApp.csproj
 
     - name: Build Android APK
-      run: dotnet publish TaskNotesApp.csproj -c Release -f net8.0-android
+      run: dotnet publish TaskNotesApp/TaskNotesApp.csproj -c Release -f net8.0-android
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: android-apk
         path: |
-          **/bin/Release/net8.0-android/publish/*.apk
+          TaskNotesApp/bin/Release/net8.0-android/publish/*.apk
