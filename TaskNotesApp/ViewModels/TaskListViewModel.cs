@@ -62,7 +62,7 @@ public class TaskListViewModel : BaseViewModel
 
     private async Task AddTask()
     {
-        // ⚠️ Empty or whitespace check
+   
         if (string.IsNullOrWhiteSpace(NewTaskTitle))
         {
             await Application.Current.MainPage.DisplayAlert(
@@ -73,17 +73,15 @@ public class TaskListViewModel : BaseViewModel
             return;
         }
 
-        // ✅ Create and save task
+   
         var task = new TaskItem { Title = NewTaskTitle };
         await App.Database.SaveTaskAsync(task);
 
-        // 🧹 Clear input
+   
         NewTaskTitle = string.Empty;
 
-        // 🔄 Refresh list
         LoadTasks();
 
-        // 🎉 Success popup
         await Application.Current.MainPage.DisplayAlert(
             "Success",
             "Task added successfully.",
@@ -136,6 +134,11 @@ public class TaskListViewModel : BaseViewModel
    
     private void EditTask(TaskItem task)
     {
+
+        foreach (var t in Tasks)
+        {
+            t.IsEditing = false;
+        }
         task.OriginalTitle = task.Title;
         task.IsEditing = true;
     }
@@ -144,12 +147,35 @@ public class TaskListViewModel : BaseViewModel
 
 
 
- 
+
     private async Task SaveTask(TaskItem task)
     {
-        if (task == null || string.IsNullOrWhiteSpace(task.Title))
+        if (task == null)
             return;
 
+   
+        if (!task.IsEditing)
+        {
+            foreach (var t in Tasks)
+            {
+                t.IsEditing = false;
+            }
+
+            task.OriginalTitle = task.Title;
+ 
+            task.IsCompleted = false;
+
+            task.IsEditing = true;
+            return;
+        }
+         
+        if (string.IsNullOrWhiteSpace(task.Title))
+        {
+            task.Title = task.OriginalTitle;
+            task.IsEditing = false;
+            return;
+        }
+ 
         if (!task.HasChanges)
         {
             task.IsEditing = false;
@@ -157,7 +183,6 @@ public class TaskListViewModel : BaseViewModel
         }
 
         await App.Database.SaveTaskAsync(task);
-
         task.OriginalTitle = task.Title;
         task.IsEditing = false;
 
@@ -167,6 +192,8 @@ public class TaskListViewModel : BaseViewModel
             "OK"
         );
     }
+
+
 
 
 

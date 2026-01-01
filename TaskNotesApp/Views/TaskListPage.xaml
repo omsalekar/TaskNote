@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:TaskNotesApp.ViewModels"
@@ -29,69 +29,64 @@
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="8"
-              ColumnDefinitions="Auto,*,Auto,Auto"
-              VerticalOptions="Center">
+                    <Grid Padding="6"
+          ColumnDefinitions="40,*,Auto,Auto"
+          VerticalOptions="Center"
+          ColumnSpacing="10">
 
                         <CheckBox Grid.Column="0"
-                          IsChecked="{Binding IsCompleted, Mode=TwoWay}"
-                          Color="green"
-                          VerticalOptions="Center" />
+          IsChecked="{Binding IsCompleted}"
+          Color="Green"
+          Scale="1.25"
+          VerticalOptions="Center"
+          HorizontalOptions="Center" />
 
 
 
-
-
+                        <!-- READ MODE -->
                         <Label Grid.Column="1"
-                   Text="{Binding Title}"
-                   FontSize="16"
-                   TextColor="Black"
-                   FontAttributes="Bold"
-                   Margin="10,0"
-                   VerticalOptions="Center"
-                   IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" />
+               Text="{Binding Title}"
+                               TextColor="Black"
+               FontSize="16"
+               FontAttributes="Bold"
+               IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}"
+               VerticalOptions="Center"/>
 
-                    
-                        <Entry Grid.Column="1"
-                   Text="{Binding Title}"
-                   FontSize="16" 
-                   FontAttributes="Bold"
-                   BackgroundColor="#F3F4F6"
-                   TextColor="Black"
-                   Margin="10,0"
-                  
+                        <Entry x:Name="EditEntry"
+       Grid.Column="1"
+       Text="{Binding Title, Mode=TwoWay}"
+       FontSize="16"
+       FontAttributes="Bold"
+       BackgroundColor="#E5E7EB"
+       TextColor="Black"
+       IsVisible="{Binding IsEditing}"
+       VerticalOptions="Center"
+                           
 
-                   IsVisible="{Binding IsEditing,Converter={StaticResource InverseBoolConverter}}" />
+       PropertyChanged="Entry_PropertyChanged"/>
 
-                      
-                   <Button  Grid.Column="2"
-                    Text="Update"
-                    FontAttributes="Bold"
-                    BackgroundColor="green"
-                    TextColor="White"
-                    WidthRequest="90"
-                    Margin="10,0"
-                    HeightRequest="30"
-                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TaskListViewModel}},
-                          Path=SaveCommand}"
-                    CommandParameter="{Binding .}"
-                    IsEnabled="{Binding HasChanges}"
-                   />
+                        <Button Grid.Column="2"
+                Text="Update"
+                BackgroundColor="Green"
+                TextColor="White"
+                                   FontAttributes="Bold"
+                WidthRequest="90"
+                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                  Path=BindingContext.SaveCommand}"
+                CommandParameter="{Binding .}" />
 
- 
-                     <Button Grid.Column="3"
-                    Text="Delete"
-                    FontAttributes="Bold"
-                    BackgroundColor="#4f46E5"
-                    TextColor="White"
-                    WidthRequest="90"
-                    HeightRequest="30"
-                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TaskListViewModel}},
-                                      Path=DeleteCommand}"
-                    CommandParameter="{Binding .}" />
-
+                        <Button Grid.Column="3"
+                Text="Delete"
+                BackgroundColor="red"
+                                   FontAttributes="Bold"
+                TextColor="White"
+                WidthRequest="90"
+                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                  Path=BindingContext.DeleteCommand}"
+                CommandParameter="{Binding .}" />
                     </Grid>
                 </DataTemplate>
+
             </CollectionView.ItemTemplate>
 
 
