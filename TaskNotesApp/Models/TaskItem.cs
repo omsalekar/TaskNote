@@ -24,19 +24,19 @@ public class TaskItem : INotifyPropertyChanged
         }
     }
 
-    bool _isCompleted;
-    [Ignore]
+    private bool _isCompleted;
     public bool IsCompleted
     {
         get => _isCompleted;
         set
         {
+            if (_isCompleted == value) return;
             _isCompleted = value;
             OnPropertyChanged();
         }
     }
 
-   
+
     bool _isEditing;
     [Ignore]
     public bool IsEditing
