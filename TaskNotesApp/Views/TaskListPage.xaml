@@ -1,4 +1,3 @@
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:TaskNotesApp.ViewModels"
@@ -9,11 +8,10 @@
         <vm:TaskListViewModel />
     </ContentPage.BindingContext>
 
- 
     <Grid Padding="16"
           RowDefinitions="Auto,*,Auto">
 
-     
+        <!-- HEADER -->
         <Label Grid.Row="0"
                Text="📝 Task Notes"
                FontSize="28"
@@ -21,78 +19,80 @@
                TextColor="#1F2937"
                Margin="0,0,0,10" />
 
-     
+        <!-- TASK LIST -->
         <CollectionView Grid.Row="1"
-                ItemsSource="{Binding Tasks}"
-                VerticalScrollBarVisibility="Always"
-                SelectionMode="None">
+                        ItemsSource="{Binding Tasks}"
+                        SelectionMode="None">
 
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="6"
-          ColumnDefinitions="40,*,Auto,Auto"
-          VerticalOptions="Center"
-          ColumnSpacing="10">
+                          ColumnDefinitions="40,*,Auto,Auto"
+                          ColumnSpacing="10"
+                          VerticalOptions="Center">
 
+                        <!-- CHECKBOX -->
                         <CheckBox Grid.Column="0"
-          IsChecked="{Binding IsCompleted}"
-          Color="Green"
-          Scale="1.25"
-          VerticalOptions="Center"
-          HorizontalOptions="Center" />
-
-
+                                  IsChecked="{Binding IsCompleted}"
+                                  Color="Green"
+                                  Scale="1.25"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="Center" />
 
                         <!-- READ MODE -->
                         <Label Grid.Column="1"
-               Text="{Binding Title}"
+                               Text="{Binding Title}"
+                               FontSize="16"
+                               FontAttributes="Bold"
                                TextColor="Black"
-               FontSize="16"
-               FontAttributes="Bold"
-               IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}"
-               VerticalOptions="Center"/>
+                               VerticalOptions="Center"
+                               InputTransparent="True"
+                               IsEnabled="False"
+                               IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" />
 
-                        <Entry x:Name="EditEntry"
-       Grid.Column="1"
-       Text="{Binding Title, Mode=TwoWay}"
-       FontSize="16"
-       FontAttributes="Bold"
-       BackgroundColor="#E5E7EB"
-       TextColor="Black"
-       IsVisible="{Binding IsEditing}"
-       VerticalOptions="Center"
-                           
+                        <!-- EDIT MODE (INLINE ENTRY) -->
+                        <Entry x:Name="InlineEditEntry"
+                               Grid.Column="1"
+                               Text="{Binding Title, Mode=TwoWay}"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="Black"
+                               BackgroundColor="Transparent"
+                               VerticalOptions="Center"
+                               IsVisible="{Binding IsEditing}"
+                               PropertyChanged="Entry_PropertyChanged"
+                               ClearButtonVisibility="WhileEditing" />
 
-       PropertyChanged="Entry_PropertyChanged"/>
-
+                        <!-- UPDATE BUTTON -->
                         <Button Grid.Column="2"
-                Text="Update"
-                BackgroundColor="Green"
-                TextColor="White"
-                                   FontAttributes="Bold"
-                WidthRequest="90"
-                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
-                                  Path=BindingContext.SaveCommand}"
-                CommandParameter="{Binding .}" />
+                                Text="Update"
+                                FontAttributes="Bold"
+                                BackgroundColor="Green"
+                                TextColor="White"
+                                WidthRequest="90"
+                             
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                  Path=BindingContext.SaveCommand}"
+                                CommandParameter="{Binding .}" />
 
+                        <!-- DELETE BUTTON -->
                         <Button Grid.Column="3"
-                Text="Delete"
-                BackgroundColor="red"
-                                   FontAttributes="Bold"
-                TextColor="White"
-                WidthRequest="90"
-                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
-                                  Path=BindingContext.DeleteCommand}"
-                CommandParameter="{Binding .}" />
+                                Text="Delete"
+                                FontAttributes="Bold"
+                                BackgroundColor="Maroon"
+                                TextColor="White"
+                                WidthRequest="90"
+                                
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
+                                                  Path=BindingContext.DeleteCommand}"
+                                CommandParameter="{Binding .}" />
                     </Grid>
                 </DataTemplate>
-
             </CollectionView.ItemTemplate>
-
 
         </CollectionView>
 
-       
+        <!-- ADD NEW TASK -->
         <Frame Grid.Row="2"
                Padding="10"
                CornerRadius="16"
@@ -107,9 +107,8 @@
                        Placeholder="Enter new task..."
                        Text="{Binding NewTaskTitle}"
                        HeightRequest="48"
-                       TextColor="Black"
                        BackgroundColor="#F3F4F6"
-                       Margin="0" />
+                       TextColor="Black" />
 
                 <Button Grid.Column="1"
                         Text="Add"
@@ -119,9 +118,7 @@
                         CornerRadius="12"
                         Command="{Binding AddCommand}" />
             </Grid>
-
         </Frame>
 
     </Grid>
-
 </ContentPage>

@@ -12,23 +12,21 @@ public class TaskListViewModel : BaseViewModel
     public string NewTaskTitle
     {
         get => _newTaskTitle;
-        set { _newTaskTitle = value; OnPropertyChanged(); }
+        set
+        {
+            _newTaskTitle = value;
+            OnPropertyChanged();
+        }
     }
 
     public ICommand AddCommand { get; }
     public ICommand DeleteCommand { get; }
-    public ICommand ToggleCommand { get; }
-    public ICommand EditCommand { get; }
     public ICommand SaveCommand { get; }
-  
-
 
     public TaskListViewModel()
     {
         AddCommand = new Command(async () => await AddTask());
         DeleteCommand = new Command<TaskItem>(async t => await DeleteTask(t));
-        ToggleCommand = new Command<TaskItem>(async t => await ToggleTask(t));
-        EditCommand = new Command<TaskItem>(EditTask);
         SaveCommand = new Command<TaskItem>(async t => await SaveTask(t));
 
         LoadTasks();
@@ -41,141 +39,88 @@ public class TaskListViewModel : BaseViewModel
 
         foreach (var item in items)
         {
-            item.OriginalTitle = item.Title; 
+            item.OriginalTitle = item.Title;
+            item.IsEditing = false;
             Tasks.Add(item);
         }
     }
 
-
-    //private async Task AddTask()
-    //{
-    //    if (string.IsNullOrWhiteSpace(NewTaskTitle))
-    //        return;
-
-    //    var task = new TaskItem { Title = NewTaskTitle };
-    //    await App.Database.SaveTaskAsync(task);
-
-    //    NewTaskTitle = string.Empty;
-    //    LoadTasks();
-    //}
-
-
     private async Task AddTask()
     {
-   
         if (string.IsNullOrWhiteSpace(NewTaskTitle))
         {
             await Application.Current.MainPage.DisplayAlert(
                 "Warning",
                 "Please enter a task before adding.",
-                "OK"
-            );
+                "OK");
             return;
         }
 
-   
         var task = new TaskItem { Title = NewTaskTitle };
         await App.Database.SaveTaskAsync(task);
 
-   
         NewTaskTitle = string.Empty;
-
         LoadTasks();
 
         await Application.Current.MainPage.DisplayAlert(
             "Success",
             "Task added successfully.",
-            "OK"
-        );
+            "OK");
     }
-
-
 
     private async Task DeleteTask(TaskItem task)
     {
         if (task == null)
             return;
 
-        
         if (!task.IsCompleted)
         {
             await Application.Current.MainPage.DisplayAlert(
                 "Action Not Allowed",
                 "Please complete the task first before deleting it.",
-                "OK"
-            );
+                "OK");
             return;
         }
 
-      
         bool confirm = await Application.Current.MainPage.DisplayAlert(
             "Confirm Delete",
             "Do you want to delete this task?",
             "Yes",
-            "No"
-        );
+            "No");
 
-   
         if (!confirm)
             return;
 
- 
         await App.Database.DeleteTaskAsync(task);
         Tasks.Remove(task);
     }
-
-   
-    private async Task ToggleTask(TaskItem task)
-    {
-        task.IsCompleted = !task.IsCompleted;
-        await App.Database.SaveTaskAsync(task);
-    }
-
-   
-    private void EditTask(TaskItem task)
-    {
-
-        foreach (var t in Tasks)
-        {
-            t.IsEditing = false;
-        }
-        task.OriginalTitle = task.Title;
-        task.IsEditing = true;
-    }
-
-
-
-
-
 
     private async Task SaveTask(TaskItem task)
     {
         if (task == null)
             return;
 
-   
+        // ENTER EDIT MODE
         if (!task.IsEditing)
         {
             foreach (var t in Tasks)
-            {
                 t.IsEditing = false;
-            }
 
             task.OriginalTitle = task.Title;
- 
             task.IsCompleted = false;
-
             task.IsEditing = true;
             return;
         }
-         
+
+        // CANCEL IF EMPTY
         if (string.IsNullOrWhiteSpace(task.Title))
         {
             task.Title = task.OriginalTitle;
             task.IsEditing = false;
             return;
         }
- 
+
+        // SAVE ONLY IF CHANGED
         if (!task.HasChanges)
         {
             task.IsEditing = false;
@@ -189,14 +134,6 @@ public class TaskListViewModel : BaseViewModel
         await Application.Current.MainPage.DisplayAlert(
             "Updated",
             "Task updated successfully.",
-            "OK"
-        );
+            "OK");
     }
-
-
-
-
-
-
-
 }
