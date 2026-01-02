@@ -10,6 +10,8 @@ public class TaskItem : INotifyPropertyChanged
     public int Id { get; set; }
 
     string _title;
+
+
     public string Title
     {
         get => _title;
