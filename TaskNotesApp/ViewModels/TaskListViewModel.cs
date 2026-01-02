@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Input;
 using TaskNotesApp.Models;
 
@@ -22,15 +23,74 @@ public class TaskListViewModel : BaseViewModel
     public ICommand AddCommand { get; }
     public ICommand DeleteCommand { get; }
     public ICommand SaveCommand { get; }
+    public ICommand SelectAllCommand { get; }
+    public ICommand DeleteAllCommand { get; }
+
 
     public TaskListViewModel()
     {
         AddCommand = new Command(async () => await AddTask());
         DeleteCommand = new Command<TaskItem>(async t => await DeleteTask(t));
         SaveCommand = new Command<TaskItem>(async t => await SaveTask(t));
+        SelectAllCommand = new Command(ToggleSelectAll);
+        DeleteAllCommand = new Command(async () => await DeleteAll());
+
 
         LoadTasks();
     }
+
+    private void ToggleSelectAll()
+    {
+        bool selectAll = Tasks.Any(t => !t.IsCompleted);
+
+        foreach (var task in Tasks)
+        {
+            task.IsCompleted = selectAll;
+        }
+    }
+
+    private async Task DeleteAll()
+    {
+        // VALIDATION 1: No tasks at all
+        if (!Tasks.Any())
+        {
+            await Application.Current.MainPage.DisplayAlert(
+                "No Tasks",
+                "There are no tasks to delete.",
+                "OK");
+            return;
+        }
+
+        // VALIDATION 2: Not all tasks selected
+        if (!Tasks.All(t => t.IsCompleted))
+        {
+            await Application.Current.MainPage.DisplayAlert(
+                "Action Not Allowed",
+                "Please select all tasks before using Delete All.",
+                "OK");
+            return;
+        }
+
+        // CONFIRMATION
+        bool confirm = await Application.Current.MainPage.DisplayAlert(
+            "Confirm Delete",
+            "All tasks are selected. Do you want to delete everything?",
+            "Yes",
+            "No");
+
+        if (!confirm)
+            return;
+
+        // DELETE ALL
+        foreach (var task in Tasks.ToList())
+        {
+            await App.Database.DeleteTaskAsync(task);
+            Tasks.Remove(task);
+        }
+    }
+
+
+
 
     private async void LoadTasks()
     {
@@ -40,10 +100,25 @@ public class TaskListViewModel : BaseViewModel
         foreach (var item in items)
         {
             item.OriginalTitle = item.Title;
-            item.IsEditing = false;
+
+            // Listen for checkbox changes
+            item.PropertyChanged += Task_PropertyChanged;
+
             Tasks.Add(item);
         }
+
+        OnPropertyChanged(nameof(AreAllTasksCompleted));
     }
+
+    private void Task_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(TaskItem.IsCompleted))
+        {
+            OnPropertyChanged(nameof(AreAllTasksCompleted));
+        }
+    }
+
+
 
     private async Task AddTask()
     {
@@ -136,4 +211,8 @@ public class TaskListViewModel : BaseViewModel
             "Task updated successfully.",
             "OK");
     }
+
+    public bool AreAllTasksCompleted =>
+    Tasks.Any() && Tasks.All(t => t.IsCompleted);
+
 }

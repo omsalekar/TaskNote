@@ -9,7 +9,7 @@
     </ContentPage.BindingContext>
 
     <Grid Padding="16"
-          RowDefinitions="Auto,*,Auto">
+          RowDefinitions="Auto,Auto,*,Auto">
 
         <!-- HEADER -->
         <Label Grid.Row="0"
@@ -19,8 +19,44 @@
                TextColor="#1F2937"
                Margin="0,0,0,10" />
 
+        <!-- ACTION BAR -->
+       
+        <Grid Grid.Row="1"
+               
+      ColumnDefinitions="Auto,Auto"
+      Margin="0,0,0,10">
+
+      
+
+            <!-- RIGHT BUTTON GROUP -->
+            <Grid Grid.Column="1"
+          ColumnDefinitions="Auto,Auto"
+          ColumnSpacing="10">
+
+                <Button Text="Select All"
+                FontAttributes="Bold"
+                BackgroundColor="DarkBlue"
+                TextColor="White"
+                WidthRequest="90"
+                HeightRequest="36"
+                CornerRadius="10"
+                Command="{Binding SelectAllCommand}" />
+
+                <Button Grid.Column="1"
+                Text="Delete All"
+                FontAttributes="Bold"
+                BackgroundColor="Maroon"
+                TextColor="White"
+                WidthRequest="90"
+                HeightRequest="36"
+                CornerRadius="10"
+                Command="{Binding DeleteAllCommand}" />
+            </Grid>
+        </Grid>
+
+
         <!-- TASK LIST -->
-        <CollectionView Grid.Row="1"
+        <CollectionView Grid.Row="2"
                         ItemsSource="{Binding Tasks}"
                         SelectionMode="None">
 
@@ -50,9 +86,8 @@
                                IsEnabled="False"
                                IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" />
 
-                        <!-- EDIT MODE (INLINE ENTRY) -->
-                        <Entry x:Name="InlineEditEntry"
-                               Grid.Column="1"
+                        <!-- EDIT MODE -->
+                        <Entry Grid.Column="1"
                                Text="{Binding Title, Mode=TwoWay}"
                                FontSize="16"
                                FontAttributes="Bold"
@@ -63,37 +98,34 @@
                                PropertyChanged="Entry_PropertyChanged"
                                ClearButtonVisibility="WhileEditing" />
 
-                        <!-- UPDATE BUTTON -->
+                        <!-- UPDATE -->
                         <Button Grid.Column="2"
                                 Text="Update"
                                 FontAttributes="Bold"
                                 BackgroundColor="Green"
                                 TextColor="White"
                                 WidthRequest="90"
-                             
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
                                                   Path=BindingContext.SaveCommand}"
                                 CommandParameter="{Binding .}" />
 
-                        <!-- DELETE BUTTON -->
+                        <!-- DELETE -->
                         <Button Grid.Column="3"
                                 Text="Delete"
                                 FontAttributes="Bold"
                                 BackgroundColor="Maroon"
                                 TextColor="White"
                                 WidthRequest="90"
-                                
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}},
                                                   Path=BindingContext.DeleteCommand}"
                                 CommandParameter="{Binding .}" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
         </CollectionView>
 
         <!-- ADD NEW TASK -->
-        <Frame Grid.Row="2"
+        <Frame Grid.Row="3"
                Padding="10"
                CornerRadius="16"
                BackgroundColor="White"
@@ -113,7 +145,7 @@
                 <Button Grid.Column="1"
                         Text="Add"
                         FontAttributes="Bold"
-                        BackgroundColor="#4F46E5"
+                        BackgroundColor="DarkBlue"
                         TextColor="White"
                         CornerRadius="12"
                         Command="{Binding AddCommand}" />
